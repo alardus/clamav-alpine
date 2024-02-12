@@ -48,6 +48,17 @@ If the local ClamAV Database is up-to-date, it will check and continue.
 
 ## How-To
 
+### Build on Unraid
+```
+docker build . -t my-clamav
+```
+
+### Run as a daemon on Unraid
+```
+docker run -d --name=AClamAV -v /mnt/user:/scan:ro -v /mnt/user/appdata/clamav:/var/lib/clamav:rw my-clama
+v:latest -i --log=/var/lib/clamav/log.log --max-filesize=2048M
+```
+
 ### Usage
 Using this image is fairly straightforward.
 
