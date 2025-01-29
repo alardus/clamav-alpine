@@ -2,16 +2,16 @@ name: Docker Image TQ CI
 
 on:
 #  push:
-#    branches: [ "master" ]
+#   branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
-
     steps:
     - name: Check out the repo
       uses: actions/checkout@v4
@@ -25,13 +25,18 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
     
     - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      id: meta-latest
+      uses: docker/metadata-action@8e1d5461f02b7886d3c1a774bfbd873650445aa2
       with:
-        images: ${{ secrets.DOCKER_USERNAME }}/clamav-alpine
-    
+        images: ${{ secrets.DOCKER_USERNAME }}/clamav-alpine:latest
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta-edge
+      uses: docker/metadata-action@8e1d5461f02b7886d3c1a774bfbd873650445aa2
+      with:
+        images: ${{ secrets.DOCKER_USERNAME }}/clamav-alpine:edge
+
     - name: Push it - Latest
-      uses: docker/build-push-action@v5.1.0
+      uses: docker/build-push-action@v6.11.0
       with:
         context: .
         file: ./Dockerfile
@@ -39,9 +44,10 @@ jobs:
         tags: ${{ secrets.DOCKER_USERNAME }}/clamav-alpine:latest 
       
     - name: Push it - Edge
-      uses: docker/build-push-action@v5.1.0
+      uses: docker/build-push-action@v6.11.0
       with:
         context: .
-        file: ./Dockerfile-edge.dockerfile
+        file: ./edge-Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/clamav-alpine:edge 
+
